@@ -1,9 +1,9 @@
 general:
-  whitelist: true
+#  whitelist: true
   pipeline_base_name: Prod Deployment
   dependency:
    - Microservice_Acceptance [PostStage]
-
+   
 #pre_stage:
 #  go_cd_agent_props:
 #    - java:8
@@ -16,10 +16,12 @@ production:
   go_cd_agent_props:
     - ansible
   trigger_mode: manual
-  type: parallel
-  commands:
-    - tasks:
-      - cmd: curl 131.207.26.213:8080/jenkins/job/DevOpsDemoProdDeployment/buildWithParameters?ImageTag=$GO_DEPENDENCY_LABEL_MICROSERVICE_ACCEPTANCE_MASTER
+  stages:
+    - stage: Production_Deployment
+      jobs:
+        - job: Deploy
+          tasks:  
+            - task: curl 131.207.26.213:8080/jenkins/job/DevOpsDemoProdDeployment/buildWithParameters?ImageTag=$GO_DEPENDENCY_LABEL_MICROSERVICE_ACCEPTANCE_MASTER
 #        build_path: .
 #      - cmd: docker 1
 #      job_name: AnsibleJob
