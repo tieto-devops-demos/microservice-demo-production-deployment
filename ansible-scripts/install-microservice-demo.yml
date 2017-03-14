@@ -1,0 +1,33 @@
+---
+- hosts: tds
+  become: yes
+
+  vars:
+    - git_url: https://raw.githubusercontent.com/tieto-devops-demos/microservice-demo-production-deployment/master/docker-compose/docker-compose.yml
+    - ssh_user: "{{lookup('env','ssh_user')}}"
+    - microservice_home: /home/{{ ssh_user }}
+    - git_dest: /var/tmp/git
+
+  roles:
+    - { role: 'angstwad.docker_ubuntu', become: yes, pip_version_docker_py: 1.9.0, pip_version_docker_compose: 1.9.0 }
+
+  tasks:
+
+  # - name: Create Microservice home directory
+  #   file:
+  #     path={{ microservice_home }}
+  #     state=directory mode=0771
+  #     # group=docker
+
+  - name: Get docker-compose file from github
+    get_url: url={{ git_url }} dest={{ microservice_home }}
+
+  - name: Remove git directory and contents
+    file:
+      path={{ git_dest }}
+      state=absent
+  - name: Pull docker images
+    command: docker-compose pull chdir={{ microservice_home }}
+
+  - name: Start the docker services
+    command: docker-compose -f docker-compose.yml up -d  chdir={{ microservice_home }}

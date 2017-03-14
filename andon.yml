@@ -1,41 +1,34 @@
 general:
-#  whitelist: true
+  whitelist: true
   pipeline_base_name: Prod Deployment
   dependency:
    - Microservice_Acceptance [PostStage]
-   
-#pre_stage:
-#  go_cd_agent_props:
-#    - java:8
-#    - maven
-#  custom_cmd:
-#    - true
-#    - true
+
+pre_stage:
+  go_cd_agent_props:
+    - ansible
+  custom_cmd:
+    - sudo ansible-galaxy install angstwad.docker_ubuntu
 
 production:
   go_cd_agent_props:
     - ansible
   trigger_mode: manual
   stages:
-    - stage: Production_Deployment
+    - stage: DeployInstance
       jobs:
-        - job: Deploy
-          tasks:  
-            - task: curl 131.207.26.213:8080/jenkins/job/DevOpsDemoProdDeployment/buildWithParameters?ImageTag=$GO_DEPENDENCY_LABEL_MICROSERVICE_ACCEPTANCE_MASTER
-#        build_path: .
-#      - cmd: docker 1
-#      job_name: AnsibleJob
-#    - tasks:
-#      - cmd: mvn 2
-#        build_path: .
-#      - cmd: docker 2
-#        build_path: .
-#      job_name: RunJob
-
-#post_stage:
-#  go_cd_agent_props:
-#    - java:8
-#    - maven
-#  custom_cmd:
-#    - true
-#    - true
+        - job: CreateAndDeployInstance
+          tasks:
+            - task: ansible-playbook -i ansible-scripts/inventory ansible-scripts/deploy-instance.yml -vvvv
+              build_path: .
+              # run_if_conditions: passed
+            - task: ansible-playbook -i ansible-scripts/inventory ansible-scripts/install-microservice-demo.yml -vvvv
+              build_path: .
+              # run_if_conditions: passed
+    - stage: DeleteInstance
+      jobs:
+        - job: Delete
+          tasks:
+            - task: ansible-playbook -i ansible-scripts/inventory ansible-scripts/delete-instance.yml -vvvv
+              build_path: .
+              run_if_conditions: passed

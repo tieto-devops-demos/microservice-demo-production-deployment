@@ -1,0 +1,33 @@
+{
+  "tenantstack":
+  {
+    "stackstoreid":"0000000014",
+    "name":"Ubuntu-server-14.04",
+    "entities":
+    {
+      "pdcubuntu_01":
+      {
+        "name":"Ubuntu-server-14.04",
+        "Description":"Microservice Demo",
+        "properties":
+        {
+          "platform":"server",
+          "isManageable":"true",
+          "env_cost_price":"0.00",
+          "sshKey": "ssh-rsa {{ssh_rsa_key}}",
+          "os_name": "Ubuntu",
+          "userToken": "{{ssh_user}}",
+          "authentication":"ssh",
+          "env_cost_period":"monthly",
+          "os_family":"Linux",
+          "os_version":"14.04",
+          "hostname":"demo",
+          "flavor":"2C-4GB",
+          "imagename":"A_ubuntu-server-14.04.03",
+          "hiera_file":"http://localhost/templates/hiera_templates/ubuntuldap.yaml",
+          "ldap_locality": "city"
+          }
+        }
+      }
+    }
+  }
