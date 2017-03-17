@@ -9,6 +9,7 @@ pre_stage:
     - ansible
   custom_cmd:
     - sudo ansible-galaxy install angstwad.docker_ubuntu
+    - sudo chown -R go:go /var/go
 
 production:
   go_cd_agent_props:
